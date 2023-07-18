@@ -9,28 +9,32 @@ foreach ($dirs as $dir) {
 }
 
 $network = new SimpleNeuralNetwork();
-print_r($network->weights);
+echo 'Weights start: ';
+print_r($network->getWeights());
+echo PHP_EOL;
 $train_inputs = array(
     array(1, 1, 0),
     array(1, 1, 1),
     array(1, 1, 0),
     array(1, 0, 0),
     array(0, 1, 1),
+    array(0, 0, 1),
     array(0, 1, 0),
 );
-$train_outputs = array(array(0, 1, 0, 0, 1, 0))[0];
+$train_outputs = array(1, 1, 1, 1, 1, 1, 0);
 $train_iterations = 50000;
 $network->train($train_inputs, $train_outputs, $train_iterations);
-print_r($network->weights);
+echo 'Weights train: ';
+print_r($network->getWeights());
+echo PHP_EOL;
 print("Testing the data");
 $test_data = array(
     array(1, 1, 1),
     array(1, 0, 0),
     array(0, 1, 1),
+    array(0, 0, 1),
+    array(1, 0, 1),
     array(0, 1, 0),
-    array(2, 2, 2),
-    array(2, 2, 1),
-    array(2, 2, 0),
     array(0, 0, 0)
 );
 

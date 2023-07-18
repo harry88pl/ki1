@@ -1,24 +1,19 @@
 <?php
 class SimpleNeuralNetwork {
-
-    public $weights;
-
+    private $weights;
     public function __construct() {
-        // Seed the random number generator.
         srand(1);
+        $this->weights = [[-0.16595599], [0.44064899], [-0.99977125]];
 
-        // Initialize the weights to random values.
         /*$this->weights = array(
             array(2 * rand(0, 1) - 1),
             array(2 * rand(0, 1) - 1),
             array(2 * rand(0, 1) - 1),
         );*/
-        $this->weights = [
-            [-0.16595599],
-            [ 0.44064899],
-            [-0.99977125]];
     }
-
+    public function getWeights() {
+        return $this->weights;
+    }
     public function train($train_input, $train_output, $train_iters) {
         for ($i = 0; $i < $train_iters; $i++) {
             $propagation_result = $this->propagation($train_input);
