@@ -18,4 +18,16 @@ function roundAll($value) {
     }
     return round($value, 6);
 }
+function xavier_init($input_size, $output_size) {
+    $limit = sqrt(6 / ($input_size + $output_size));
+    $weights = array();
+
+    for ($i = 0; $i < $input_size; $i++) {
+        for ($j = 0; $j < $output_size; $j++) {
+            $weights[$i][$j] = (rand(0, 2000) - 1000) / 1000 * $limit;
+        }
+    }
+
+    return $weights;
+}
 

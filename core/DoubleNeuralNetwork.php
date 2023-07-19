@@ -3,11 +3,7 @@ class DoubleNeuralNetwork {
     private $weights;
     public function __construct() {
         srand(1);
-        $this->weights = array(
-            array((rand(0, 2000) - 1000) / 1000, (rand(0, 2000) - 1000) / 1000),
-            array((rand(0, 2000) - 1000) / 1000, (rand(0, 2000) - 1000) / 1000),
-            array((rand(0, 2000) - 1000) / 1000, (rand(0, 2000) - 1000) / 1000),
-        );
+        $this->weights = xavier_init(3, 2);
     }
     public function getWeights() {
         return $this->weights;
@@ -28,22 +24,9 @@ class DoubleNeuralNetwork {
 
     public function backward_propagation($propagation_result, $train_input, $train_output) {
         $errors = matrix::subtract($train_output, $propagation_result);
-        $d_sigmoid = d_sigmoid($propagation_result);
-        $weight_updates = array();
-        foreach ($errors as $id => $error) {
-            $weight_update = array();
-            foreach ($error as $key => $val) {
-                $weight_update[$key] = clampToRange($train_input[$id][$key] * $errors[$id][$key] * $d_sigmoid[$id][$key]);
-            }
-            $weight_updates[] = $weight_update;
-        }
-
-        // Aktualizacja wag dla obu neuronów wyjściowych
-        for ($i = 0; $i < count($this->weights); $i++) {
-            for ($j = 0; $j < count($this->weights[$i]); $j++) {
-                $this->weights[$i][$j] += $weight_updates[$i][$j];
-            }
-        }
+        $multiply = matrix::multiply($errors, d_sigmoid($propagation_result));
+        $dot = matrix::dot(matrix::transpose($train_input), $multiply);
+        $this->weights = clampToRange(matrix::sum($this->weights, $dot));
     }
 
     public function propagation($inputs) {
