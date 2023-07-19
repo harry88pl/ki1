@@ -8,7 +8,6 @@ class matrix {
         $columns2 = count($matrix2[0]);
 
         if ($columns1 !== $rows2) {
-            // Rzucanie wyjątku lub obsługa błędu, gdy wymiary macierzy są nieprawidłowe
             throw new Exception("Nieprawidłowe wymiary macierzy(2).");
         }
 
@@ -37,49 +36,44 @@ class matrix {
         $columns1 = count($matrix1[0]);
         $rows2 = count($matrix2);
         $columns2 = count($matrix2[0]);
-        if ($columns1 !== $columns2 || $rows1 !== $rows2) {
-            throw new Exception("Nieprawidłowe wymiary macierzy.");
+        if ($columns1 == $columns2 && $rows1 == $rows2) {
+            return self::multiplyMethod1($matrix1, $matrix2);
         }
+        return self::multiplyMethod2($matrix1, $matrix2);
+    }
+
+    public static function multiplyMethod1($matrix1, $matrix2) {
+        $rows1 = count($matrix1);
+        $columns2 = count($matrix2[0]);
         $result = array();
         for ($i = 0; $i < $rows1; $i++) {
             $row = array();
-
             for ($j = 0; $j < $columns2; $j++) {
-                $element = 0;
-
-                for ($k = 0; $k < $columns1; $k++) {
-                    $element += $matrix1[$i][$k] * $matrix2[$k][$j];
-                }
-
+                $element = $matrix1[$i][$j] * $matrix2[$i][$j];
                 $row[] = $element;
             }
-
             $result[] = $row;
         }
         return $result;
     }
-    public static function multiplyAdrian($matrix1, $matrix2) {
+    public static function multiplyMethod2($matrix1, $matrix2) {
         $rows1 = count($matrix1);
         $columns1 = count($matrix1[0]);
         $rows2 = count($matrix2);
         $columns2 = count($matrix2[0]);
-        if ($columns1 !== $columns2 || $rows1 !== $rows2) {
-            throw new Exception("Nieprawidłowe wymiary macierzy.");
-        }
         $result = array();
         for ($i = 0; $i < $rows1; $i++) {
             $row = array();
             for ($j = 0; $j < $columns2; $j++) {
                 $element = 0;
-                $element += $matrix1[$i][$j] * $matrix2[$i][$j];
+                for ($k = 0; $k < $columns1; $k++) {
+                    $element += $matrix1[$i][$k] * $matrix2[$k][$j];
+                }
                 $row[] = $element;
             }
             $result[] = $row;
         }
         return $result;
-    }
-    public static function divide() {
-
     }
 
     public static function subtract($matrix1, $matrix2) {
@@ -189,5 +183,21 @@ class matrix {
             $result[] = $exp_row;
         }
         return $result;
+    }
+
+    public static function compare_matrices($matrix1, $matrix2) {
+        if (count($matrix1) !== count($matrix2) || count($matrix1[0]) !== count($matrix2[0])) {
+            return false;
+        }
+
+        for ($i = 0; $i < count($matrix1); $i++) {
+            for ($j = 0; $j < count($matrix1[0]); $j++) {
+                if ($matrix1[$i][$j] !== $matrix2[$i][$j]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

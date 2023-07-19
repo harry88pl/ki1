@@ -1,88 +1,42 @@
 <?php
+include 'autoloader.php';
 
-$dirs = array('core', 'lib');
-foreach ($dirs as $dir) {
-    foreach(scandir($dir) as $file) {
-        if (pathinfo($file, PATHINFO_EXTENSION) !== "php") continue;
-        include_once $dir . '/' . $file;
-    }
-}
+$trainingCollection = new TrainingCollection();
+$trainingCollection->add(new TrainingData(array(1, 1, 0, 0), 1));
+$trainingCollection->add(new TrainingData(array(1, 1, 1, 0), 1));
+$trainingCollection->add(new TrainingData(array(1, 1, 0, 0), 1));
+$trainingCollection->add(new TrainingData(array(1, 0, 0, 0), 1));
+$trainingCollection->add(new TrainingData(array(0, 1, 1, 0), 1));
+$trainingCollection->add(new TrainingData(array(0, 0, 1, 0), 1));
+$trainingCollection->add(new TrainingData(array(0, 1, 0, 0), 0));
+$trainingCollection->add(new TrainingData(array(0, 1, 1, 0), 0));
+$trainingCollection->add(new TrainingData(array(0, 1, 0, 1), 1));
+$trainingCollection->add(new TrainingData(array(0, 0, 0, 1), 0));
+$trainingCollection->add(new TrainingData(array(1, 1, 1, 1), 0));
+$trainingCollection->add(new TrainingData(array(0, 1, 0, 0), 0));
 
 $network = new SimpleNeuralNetwork();
-echo 'Weights start: ';
-print_r($network->getWeights());
-echo PHP_EOL;
-$train_inputs = array(
-    array(1, 1, 0),
-    array(1, 1, 1),
-    array(1, 1, 0),
-    array(1, 0, 0),
-    array(0, 1, 1),
-    array(0, 0, 1),
-    array(0, 1, 0),
-);
-$train_outputs = array(1, 1, 1, 1, 1, 1, 0);
-$train_iterations = 50000;
-$network->train($train_inputs, $train_outputs, $train_iterations);
-echo 'Weights train: ';
-print_r($network->getWeights());
+echo PHP_EOL . 'Weights start: ' . PHP_EOL . $network->getWeightsList();
+$network->train($trainingCollection, 50000);
+echo PHP_EOL . 'Weights train: ' . PHP_EOL . $network->getWeightsList();
 echo PHP_EOL;
 print("Testing the data");
 $test_data = array(
-    array(1, 1, 1),
-    array(1, 0, 0),
-    array(0, 1, 1),
-    array(0, 0, 1),
-    array(1, 0, 1),
-    array(0, 1, 0),
-    array(0, 0, 0)
+    array(1, 1, 1, 0),
+    array(1, 0, 0, 0),
+    array(0, 1, 1, 0),
+    array(0, 0, 1, 0),
+    array(0, 1, 1, 0),
+    array(1, 0, 1, 0),
+    array(0, 1, 0, 0),
+    array(0, 1, 0, 1),
+    array(1, 1, 1, 1),
+    array(0, 0, 0, 0)
 );
 
 foreach ($test_data as $data) {
     echo "Result for [" . implode(',', $data) . "] is: ";
     $res = $network->propagation(array($data), false);
     $res = end($res);
-    echo end($res) . PHP_EOL;
+    echo round(end($res), 6) . PHP_EOL;
 }
-
-/*
-$files = scandir("core");
-
-$files = array_filter($files, function ($file) {
-    return pathinfo($file, PATHINFO_EXTENSION) === "php";
-});
-
-foreach ($files as $file) {
-    include_once "core/" . $file;
-}
-
-$network = new SimpleNeuralNetwork();
-
-echo "Initial weights:\n";
-print_r($network->weights);
-
-$train_inputs = [
-    [1, 1, 0], [1, 1, 1], [1, 1, 0], [1, 0, 0], [0, 1, 1], [0, 1, 0]
-];
-
-$train_outputs = [
-    [0], [1], [0], [0], [1], [0]
-];
-
-$train_iterations = 50000;
-
-$network->train($train_inputs, $train_outputs, $train_iterations);
-
-echo "Trained weights:\n";
-print_r($network->weights);
-
-echo "Testing the data:\n";
-$test_data = [
-    [1, 1, 1], [1, 0, 0], [0, 1, 1], [0, 1, 0]
-];
-
-foreach ($test_data as $data) {
-    echo "Result for " . implode(", ", $data) . " is:\n";
-    print_r($network->propagation($data));
-}
-*/
